@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "729007544286",
+    "project_id": "h-bionic",
+    "storage_bucket": "h-bionic.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:729007544286:android:2d62f61ebe5c45361a6f4f",
+        "android_client_info": {
+          "package_name": "com.example.h_bionic"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCftfg5mdjqNd40uL9ya2RZdOwqt1m4r2s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

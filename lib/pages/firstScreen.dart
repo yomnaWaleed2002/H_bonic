@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
  
 
   @override
@@ -50,10 +52,10 @@ class _SplashScreenState extends State<SplashScreen> {
                   color: const Color.fromARGB(255, 67, 159, 210),
                   child:  Column(
                     children: [
-                      SizedBox(height: 110),
+                      const SizedBox(height: 90),
                       Text("Electronic Human Limbs".tr,
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 24, color: Colors.white)),
+                          style: const TextStyle(fontSize: 24, color: Colors.white)),
                     ],
                   ),
                 ),
