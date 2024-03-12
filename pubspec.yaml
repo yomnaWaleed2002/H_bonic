@@ -47,7 +47,8 @@ dependencies:
   firebase_core: ^2.25.5
   firebase_auth: ^4.17.6
   modal_progress_hud_nsn: ^0.5.1
-
+  flutter_launcher_icons: ^0.13.1
+ 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
@@ -55,6 +56,13 @@ dependencies:
   provider: ^6.0.5
   get: ^4.6.6
   get_storage: ^2.0.3
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "images/H-Bionic Logo Design Icon-01 1-fotor-20231204194535.png"
+  min_sdk_android: 21 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -90,6 +98,7 @@ flutter:
     - images/H-Bionic Logo Design Icon-01 1-fotor-20231204194535.png
     - images/ar.png
     - images/en.png
+    - images/hand.png                           
     - images/thermometer_3-removebg-preview.png
 
   # An image asset can refer to one or more resolution-specific "variants", see

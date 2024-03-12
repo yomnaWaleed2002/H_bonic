@@ -59,7 +59,7 @@ class _MyAppState extends State<MyApp> {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: _themeManager.themeMode,
-      home: SplashScreen(),
+      home: Bottom_bar(),
       translations: Translation(),
       locale: const Locale('en', 'US'),
       fallbackLocale: const Locale('en'),
@@ -198,7 +198,7 @@ class _MyHomeScreenState extends State<Setting> {
                   ),
                 ),
                 Text(
-                  "connect to limb".tr,
+                  "connect to a H-bionc".tr,
                   style: const TextStyle(fontSize: 17),
                 ),
               ],

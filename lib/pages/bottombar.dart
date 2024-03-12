@@ -14,7 +14,7 @@ class Bottom_bar extends StatefulWidget {
 
 class _Bottom_barState extends State<Bottom_bar> {
   int _currentIndex = 0;
-  List<Widget> Options = [heart(),oxgen(),chat(),temp(),Setting()];
+  List<Widget> Options = [heart(),oxgen(),chat(),tmp(),Setting()];
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(

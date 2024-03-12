@@ -159,16 +159,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () async {
                         if (formKey!.currentState!.validate()) {
                           loding = true;
-                          setState(() {
-                            
-                          });
+                          setState(() {});
                           try {
                             await login();
                             showsnackbar(context, 'success');
-                             Navigator.of(context)
-                              .push(MaterialPageRoute(builder: (v) {
-                            return Bottom_bar();
-                          }));
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (v) {
+                              return Bottom_bar();
+                            }));
                           } on FirebaseAuthException catch (e) {
                             if (e.code == 'weak-password') {
                               showsnackbar(context, 'weak pasworrd');
@@ -180,12 +178,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 'should enter email and pasworrd to continue');
                           }
                           ;
-                           loding = false;
-                           setState(() {
-                             
-                           });
-
-                         
+                          loding = false;
+                          setState(() {});
                         }
                       },
                       style: ElevatedButton.styleFrom(

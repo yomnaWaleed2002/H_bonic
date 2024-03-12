@@ -1,19 +1,48 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:get/get.dart';
 import 'package:siri_wave/siri_wave.dart';
+
 class heart extends StatefulWidget {
-  
+  final BluetoothConnection? connection;
+
+  const heart({Key? key, this.connection}) : super(key: key);
   @override
   State<heart> createState() => _MyWidgetState();
 }
 
 class _MyWidgetState extends State<heart> {
+  int heartRate = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  void _startTimer() {
+    Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      if (widget.connection != null && widget.connection!.isConnected) {
+        widget.connection!.input!.listen((Uint8List data) {
+          setState(() {
+            heartRate = int.parse(ascii.decode(data));
+          });
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = IOS7SiriWaveformController(
       amplitude: 0.9,
-      color: Color(0xff466AFF),
+      color: const Color(0xff466AFF),
       frequency: 5,
       speed: 0.18,
     );
@@ -22,7 +51,7 @@ class _MyWidgetState extends State<heart> {
       //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left:28,top: 50,right: 28),
+          padding: const EdgeInsets.only(left: 28, top: 50, right: 28),
           child: Row(
             children: [
               Image.asset(
@@ -35,7 +64,7 @@ class _MyWidgetState extends State<heart> {
                 child: Text(
                   "Heart Rate".tr,
                   style: TextStyle(
-                     color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? Colors.white : Colors.black,
                     fontSize: 30,
                     fontFamily: 'Century Gothic',
                     fontWeight: FontWeight.w400,
@@ -45,41 +74,55 @@ class _MyWidgetState extends State<heart> {
             ],
           ),
         ),
-         Padding(
-           padding: const EdgeInsets.only(left: 40,top:70,right: 40),
-           child: Row(children: [
-             Text('Heart AVG bpm'.tr,style: TextStyle(
-                      color: isDark ? Colors.white : Colors.black,
-                      fontSize: 23,
+        Padding(
+          padding: const EdgeInsets.only(left: 40, top: 70, right: 40),
+          child: Row(
+            children: [
+              Text(
+                'Heart AVG bpm'.tr,
+                style: TextStyle(
+                  color: isDark ? Colors.white : Colors.black,
+                  fontSize: 23,
+                  fontFamily: 'Century Gothic',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              Stack(children: [
+                Icon(Icons.favorite, color: Colors.red, size: 120),
+                Padding(
+                  padding: EdgeInsets.all(38),
+                  child: Text(
+                    '$heartRate',
+                    style: TextStyle(
+                      color: Color.fromARGB(255, 238, 186, 186),
+                      fontSize: 34,
                       fontFamily: 'Century Gothic',
                       fontWeight: FontWeight.w400,
-                    ),),
-                    Text('79',style: TextStyle(
-                      color: Color(0xff466AFF),
-                      fontSize: 30,
-                      fontFamily: 'Century Gothic',
-                      fontWeight: FontWeight.w400,
-                    ),)
-                   ],),
-         ),
-         Container(
+                    ),
+                  ),
+                ),
+              ])
+            ],
+          ),
+        ),
+        Container(
             width: 350,
             height: 280,
             decoration: BoxDecoration(
-              color: Color(0xff282A2C),
+              color: const Color(0xff282A2C),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
               children: [
-                 Padding(
-                   padding: const EdgeInsets.only(top:20),
-                   child: Row(
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Row(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(right:80 ,left: 80),
+                        padding: const EdgeInsets.only(right: 80, left: 80),
                         child: Text(
                           'Heart’s bpm'.tr,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,
                             fontFamily: 'Century Gothic',
@@ -88,72 +131,87 @@ class _MyWidgetState extends State<heart> {
                           ),
                         ),
                       ),
-                             
-                      Icon(Icons.comment,color: Colors.white),
-                       Padding(
-                         padding: const EdgeInsets.only(left: 10,right: 10),
-                         child: Icon(Icons.reply_sharp,color: Colors.white,),
-                       ),
-                      
+                      const Icon(Icons.comment, color: Colors.white),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 10, right: 10),
+                        child: Icon(
+                          Icons.reply_sharp,
+                          color: Colors.white,
+                        ),
+                      ),
                     ],
-                   ),
-                 ),
+                  ),
+                ),
                 SiriWaveform.ios7(
-              controller: controller,
-              options: IOS7SiriWaveformOptions(
-                height: 190,
-                width: 400,
-              ),
-            ),
-          
-           
+                  controller: controller,
+                  options: const IOS7SiriWaveformOptions(
+                    height: 190,
+                    width: 400,
+                  ),
+                ),
               ],
-            )
-          ),
-        
+            )),
         Padding(
-          padding: const EdgeInsets.only(top:50),
+          padding: const EdgeInsets.only(top: 10),
           child: Container(
             width: 350,
             height: 70,
             decoration: BoxDecoration(
-              color: Color(0xff282A2C),
+              color: const Color(0xff282A2C),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Padding(
-              padding: const EdgeInsets.only(left:10,top: 5,right: 10),
+              padding: const EdgeInsets.only(left: 10, top: 5, right: 10),
               child: Row(children: [
-                Icon(Icons.favorite,color: Colors.red,size: 60,),
-                Padding(
-                  padding: const EdgeInsets.only(top:15,right: 80,left: 6),
-                  child: Column(children: [Text('Heart Health',style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 15,
-                              fontFamily: 'Century Gothic',
-                              fontWeight: FontWeight.w400,
-                              height: 0,
-                            ),),
-                            Text('55',style:TextStyle(color: Colors.white,fontSize: 22,
-                              fontFamily: 'Century Gothic',
-                              fontWeight: FontWeight.w400,))
-                  ],),
+                const Icon(
+                  Icons.favorite,
+                  color: Colors.red,
+                  size: 60,
                 ),
-            
-          Padding(
-            padding: const EdgeInsets.only(bottom: 5),
-            child: ElevatedButton(
-              style:ButtonStyle(
-                padding: MaterialStateProperty.all(EdgeInsets.all(20)),
-              backgroundColor: MaterialStateProperty.all(Color(0xff469FD1)),
-              ),
-              onPressed: () {},
-              child: const Text('measure',style: TextStyle(color: Colors.white),),
-            ),
-          ),
-        
+                const Padding(
+                  padding: EdgeInsets.only(top: 15, right: 80, left: 6),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Heart Health',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 15,
+                          fontFamily: 'Century Gothic',
+                          fontWeight: FontWeight.w400,
+                          height: 0,
+                        ),
+                      ),
+                      Text('55',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
+                            fontFamily: 'Century Gothic',
+                            fontWeight: FontWeight.w400,
+                          ))
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      padding:
+                          MaterialStateProperty.all(const EdgeInsets.all(20)),
+                      backgroundColor:
+                          MaterialStateProperty.all(const Color(0xff469FD1)),
+                    ),
+                    onPressed: () {
+                      _startTimer();
+                    },
+                    child: const Text(
+                      'measure',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
               ]),
             ),
-            
           ),
         ),
       ],
