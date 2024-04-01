@@ -15,8 +15,6 @@ class _MyWidgetState extends State<bluetooth> {
   List<BluetoothDevice> _devices = [];
   BluetoothConnection? connection;
   String adr = "00:21:07:00:50:69"; // my bluetooth device MAC Adres
- 
-
 
   Timer? _timer;
   @override
@@ -52,7 +50,7 @@ class _MyWidgetState extends State<bluetooth> {
   //--------------------------------------
 
 // TIMER START-----
- 
+
 //---------------------------------------------
   @override
   void dispose() {
@@ -68,7 +66,7 @@ class _MyWidgetState extends State<bluetooth> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Image.asset("images/hand.png"),
             const SizedBox(

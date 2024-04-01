@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -224,7 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void showsnackbar(BuildContext context, String message) {
     ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+        .showSnackBar(SnackBar(content: Text(message),padding: EdgeInsets.all(10),margin: EdgeInsets.all(25),behavior: SnackBarBehavior.floating,));
   }
 
   Future<void> login() async {

@@ -59,7 +59,7 @@ class _MyAppState extends State<MyApp> {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: _themeManager.themeMode,
-      home: Bottom_bar(),
+      home: SplashScreen(),
       translations: Translation(),
       locale: const Locale('en', 'US'),
       fallbackLocale: const Locale('en'),

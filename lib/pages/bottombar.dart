@@ -14,7 +14,7 @@ class Bottom_bar extends StatefulWidget {
 
 class _Bottom_barState extends State<Bottom_bar> {
   int _currentIndex = 0;
-  List<Widget> Options = [heart(),oxgen(),chat(),tmp(),Setting()];
+  List<Widget> Options = [heart(), oxgen(), chat(), tmp(), Setting()];
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
@@ -22,33 +22,33 @@ class _Bottom_barState extends State<Bottom_bar> {
       bottomNavigationBar: ConvexAppBar(
         items: [
           TabItem(
-              icon: Image.asset(
-                "images/heart-rate 1.png",
-                width: 100,
-                height: 100,
-              ),
-              title: 'heart'.tr,
-              activeIcon: Image.asset(
-                "images/heart-rate 1.png",
-                width: 100,
-                height: 100,
-                color: Colors.blue,
-              ),
-              ),
+            icon: Image.asset(
+              "images/heart-rate 1.png",
+              width: 100,
+              height: 100,
+            ),
+            title: 'heart'.tr,
+            activeIcon: Image.asset(
+              "images/heart-rate 1.png",
+              width: 100,
+              height: 100,
+              color: Colors.blue,
+            ),
+          ),
           TabItem(
-              icon: Image.asset(
-                "images/oxygen 2.png",
-                width: 100,
-                height: 100,
-              ),
-              title:'oxygen'.tr,
-              activeIcon: Image.asset(
-                "images/oxygen 2.png",
-                width: 100,
-                height: 100,
-                color: Colors.blue,
-              ),
-              ),
+            icon: Image.asset(
+              "images/oxygen 2.png",
+              width: 100,
+              height: 100,
+            ),
+            title: 'oxygen'.tr,
+            activeIcon: Image.asset(
+              "images/oxygen 2.png",
+              width: 100,
+              height: 100,
+              color: Colors.blue,
+            ),
+          ),
           TabItem(
               icon: Image.asset(
                 "images/customer-service 1.png",
@@ -61,7 +61,6 @@ class _Bottom_barState extends State<Bottom_bar> {
                 "images/thermometer 2.png",
                 width: 100,
                 height: 100,
-               
               ),
               title: 'temp'.tr),
           TabItem(
@@ -70,7 +69,6 @@ class _Bottom_barState extends State<Bottom_bar> {
                 width: 100,
                 height: 100,
               ),
-             
               title: 'setting'.tr),
         ],
         //initialActiveIndex: _current_index,
@@ -79,13 +77,12 @@ class _Bottom_barState extends State<Bottom_bar> {
         backgroundColor: Colors.grey[200],
         onTap: changeItem,
       ),
-
     );
   }
+
   void changeItem(int index) {
     setState(() {
-      _currentIndex=index;
+      _currentIndex = index;
     });
   }
-
 }
