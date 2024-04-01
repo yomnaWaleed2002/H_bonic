@@ -75,7 +75,7 @@ class _MyWidgetState extends State<heart> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 40, top: 70, right: 40),
+          padding: const EdgeInsets.only(left: 40, top: 50, right: 40),
           child: Row(
             children: [
               Text(
@@ -88,7 +88,7 @@ class _MyWidgetState extends State<heart> {
                 ),
               ),
               Stack(children: [
-                Icon(Icons.favorite, color: Colors.red, size: 120),
+                Icon(Icons.favorite, color: Colors.red, size: 100),
                 Padding(
                   padding: EdgeInsets.all(38),
                   child: Text(
