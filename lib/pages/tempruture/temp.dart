@@ -52,7 +52,7 @@ class _tmpState extends State<tmp> {
                 height: 60,
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 28, right: 28),
+                padding: const EdgeInsets.only(left: 18, right: 18),
                 child: Text(
                   "Temperature".tr,
                   style: TextStyle(

@@ -27,40 +27,42 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              const Spacer(),
-              const Text(
-                'H-BIONIC',
-                style: TextStyle(fontSize: 55, fontWeight: FontWeight.normal),
-              ),
-              const Spacer(),
-              CircleAvatar(
-                radius: 150,
-                child: Image.asset('images/logo.jpg', fit: BoxFit.fill),
-              ),
-              const Spacer(),
-              ClipPath(
-                clipper: CurvedClipper(),
-                child: Container(
-                  width: double.infinity,
-                  height: 200,
-                  color: const Color.fromARGB(255, 67, 159, 210),
-                  child:  Column(
-                    children: [
-                      const SizedBox(height: 90),
-                      Text("Electronic Human Limbs".tr,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 24, color: Colors.white)),
-                    ],
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                const Spacer(),
+                const Text(
+                  'H-BIONIC',
+                  style: TextStyle(fontSize: 55, fontWeight: FontWeight.normal),
+                ),
+                const Spacer(),
+                CircleAvatar(
+                  radius: 150,
+                  child: Image.asset('images/logo.jpg', fit: BoxFit.fill),
+                ),
+                const Spacer(),
+                ClipPath(
+                  clipper: CurvedClipper(),
+                  child: Container(
+                    width: double.infinity,
+                    height: 200,
+                    color: const Color.fromARGB(255, 67, 159, 210),
+                    child:  Column(
+                      children: [
+                        const SizedBox(height: 90),
+                        Text("Electronic Human Limbs".tr,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 24, color: Colors.white)),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

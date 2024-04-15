@@ -31,7 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   siri_wave: ^2.0.0+1  
-  fl_chart: ^0.66.1  
+  fl_chart: ^0.67.0  
   sleek_circular_slider: ^2.0.1
   convex_bottom_bar: ^3.0.0
   flutter_linkify: ^6.0.0
@@ -42,13 +42,13 @@ dependencies:
   lite_rolling_switch: ^1.0.1
   percent_indicator: ^4.0.1
   flutter_locales: ^3.0.1
-  permission_handler: ^11.3.0
+  permission_handler: ^11.3.1
   flutter_bluetooth_serial: ^0.4.0
   firebase_core: ^2.25.5
   firebase_auth: ^4.17.6
   modal_progress_hud_nsn: ^0.5.1
   flutter_launcher_icons: ^0.13.1
- 
+  all_bluetooth: ^0.1.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6

@@ -1,23 +1,23 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:awesome_ripple_animation/awesome_ripple_animation.dart';
 import 'package:liquid_progress_indicator_v2/liquid_progress_indicator.dart';
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+
 
 class oxgen extends StatefulWidget {
-  final BluetoothConnection? connection;
-  const oxgen({Key? key, this.connection}) : super(key: key);
+final Stream<Uint8List>? dataStream;
+  const oxgen({Key? key, this.dataStream}) : super(key: key);
   @override
   State<oxgen> createState() => _oxgenState();
 }
 
 class _oxgenState extends State<oxgen> {
-  int oxygenLevel = 0;
+
+int oxygenLevel = 0;
 
   @override
   void initState() {
@@ -27,8 +27,8 @@ class _oxgenState extends State<oxgen> {
 
   void _startTimer() {
     Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      if (widget.connection != null && widget.connection!.isConnected) {
-        widget.connection!.input!.listen((Uint8List data) {
+      if (widget.dataStream != null) {
+        widget.dataStream!.listen((Uint8List data) {
           setState(() {
             oxygenLevel = int.parse(ascii.decode(data));
           });
@@ -36,12 +36,15 @@ class _oxgenState extends State<oxgen> {
       }
     });
   }
+  
+
 
   @override
   Widget build(BuildContext context) {
     double oxgen2 = oxygenLevel / 100;
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
+    
       children: [
         Padding(
           padding: const EdgeInsets.all(42),
@@ -53,7 +56,7 @@ class _oxgenState extends State<oxgen> {
                 backgroundColor: Colors.white,
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 28, right: 28),
+                padding: const EdgeInsets.only(left: 18, right: 18),
                 child: Text(
                   "Oxygen Ratio".tr,
                   style: TextStyle(
@@ -131,7 +134,7 @@ class _oxgenState extends State<oxgen> {
         ),
         ElevatedButton(
           onPressed: () {
-            _startTimer();
+            
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xff469FD1),
