@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:get/get.dart';
-import 'package:h_bionic/pages/bluetooth/homebluetooth.dart';
 import 'package:h_bionic/pages/bottombar.dart';
 import 'package:h_bionic/pages/firstScreen.dart';
 import 'package:h_bionic/pages/bluetooth/bluetooth.dart';
@@ -60,7 +59,7 @@ class _MyAppState extends State<MyApp> {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: _themeManager.themeMode,
-      home: Bottom_bar(),
+      home: SplashScreen(),
       translations: Translation(),
       locale: const Locale('en', 'US'),
       fallbackLocale: const Locale('en'),
@@ -192,13 +191,13 @@ class _MyHomeScreenState extends State<Setting> {
                         onPressed: () async {
                           // ignore: unused_local_variable
                           await Navigator.of(context).push(MaterialPageRoute(
-                              builder: (_) => BluetoothWidget()));
+                              builder: (_) => BluetoothReceiver()));
                         },
                       ),
                     ),
                   ),
                   Text(
-                    "connect to a H-bionc".tr,
+                    "Connect to a H-bionc".tr,
                     style: const TextStyle(fontSize: 17),
                   ),
                 ],

@@ -10,30 +10,78 @@ import 'package:get/get.dart';
 import 'package:siri_wave/siri_wave.dart';
 
 class heart extends StatefulWidget {
-  final BluetoothConnection? connection;
-
-  const heart({Key? key, this.connection}) : super(key: key);
   @override
   State<heart> createState() => _MyWidgetState();
 }
 
 class _MyWidgetState extends State<heart> {
-  int heartRate = 0;
+  String _receivedData = '';
+  String heartRate = '';
+  String oxygenSaturation = '';
+  String temperature = '';
+  bool _isConnected = false; // Track connection status
+  BluetoothConnection? connection; // Track the connection status
 
   @override
   void initState() {
     super.initState();
-    _startTimer();
   }
 
-  void _startTimer() {
-    Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      if (widget.connection != null && widget.connection!.isConnected) {
-        widget.connection!.input!.listen((Uint8List data) {
+  void _connectBluetooth() async {
+    try {
+      // Fetch all bonded devices
+      List<BluetoothDevice> devices =
+          await FlutterBluetoothSerial.instance.getBondedDevices();
+
+      // Find the device by name
+      BluetoothDevice device = devices.firstWhere(
+        (device) => device.name == 'HC-05',
+      );
+
+      if (device != null) {
+        // Connect to the device
+        connection = await BluetoothConnection.toAddress(device.address);
+        connection!.input!.listen((Uint8List data) {
           setState(() {
-            heartRate = int.parse(ascii.decode(data));
+            _receivedData += String.fromCharCodes(data);
+            // Split received data into three values
+            List<String> values = _receivedData.split(',');
+            if (values.length >= 3) {
+              heartRate = values[0];
+              oxygenSaturation = values[1];
+              temperature = values[2];
+
+              // Do something with the received data
+              print('Heart Rate: $heartRate');
+              print('Oxygen Saturation: $oxygenSaturation');
+              print('Temperature: $temperature');
+              // Clear received data buffer
+              _receivedData = '';
+            }
           });
         });
+
+        setState(() {
+          _isConnected = true; // Update connection status
+        });
+      } else {
+        print('Device not found.');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  void _disconnectBluetooth() {
+    setState(() {
+      _isConnected = false; // Update connection status
+      _receivedData = '';
+      heartRate = '';
+      oxygenSaturation = '';
+      temperature = '';
+      // Close the Bluetooth connection
+      if (connection != null) {
+        connection!.close();
       }
     });
   }
@@ -88,21 +136,18 @@ class _MyWidgetState extends State<heart> {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                Stack(children: [
-                  Icon(Icons.favorite, color: Colors.red, size: 100),
-                  Padding(
-                    padding: EdgeInsets.all(38),
-                    child: Text(
-                      '$heartRate',
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 238, 186, 186),
-                        fontSize: 34,
-                        fontFamily: 'Century Gothic',
-                        fontWeight: FontWeight.w400,
-                      ),
+                Padding(
+                  padding: const EdgeInsets.all(30),
+                  child: Text(
+                    heartRate,
+                    style: const TextStyle(
+                      color: Color(0xFF459ED1),
+                      fontSize: 17,
+                      fontFamily: 'Century Gothic',
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
-                ])
+                ),
               ],
             ),
           ),
@@ -196,20 +241,20 @@ class _MyWidgetState extends State<heart> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 5),
                     child: ElevatedButton(
-                      style: ButtonStyle(
-                        padding:
-                            MaterialStateProperty.all(const EdgeInsets.all(20)),
-                        backgroundColor:
-                            MaterialStateProperty.all(const Color(0xff469FD1)),
-                      ),
-                      onPressed: () {
-                        _startTimer();
-                      },
-                      child: const Text(
-                        'measure',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                              _isConnected
+                                  ? Color(0xFF459ED1)
+                                  : Color(
+                                      0xFF459ED1), // Change color based on condition
+                            ),
+                            padding: MaterialStateProperty.all(
+                                const EdgeInsets.all(20))),
+                        onPressed: _isConnected
+                            ? _disconnectBluetooth
+                            : _connectBluetooth,
+                        child: Text(_isConnected ? 'stoping' : 'Measure',
+                            style: TextStyle(color: Colors.white))),
                   ),
                 ]),
               ),

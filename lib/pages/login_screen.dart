@@ -19,8 +19,7 @@ bool loding = false;
 GlobalKey<FormState>? formKey = GlobalKey();
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController? emailController;
-  TextEditingController? passwordController;
+ 
   bool isPasswordVisible = false;
   bool isChecked = false;
   @override
@@ -63,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onChanged: (data) {
                         email = data;
                       },
-                      controller: emailController,
+                      //controller: emailController,
                       decoration: InputDecoration(
                           prefixIcon: const Icon(
                             Icons.email_outlined,
@@ -88,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onChanged: (data) {
                         password = data;
                       },
-                      controller: passwordController,
+                     // controller: passwordController,
                       obscureText: isPasswordVisible ? false : true,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(
@@ -169,10 +168,15 @@ class _LoginScreenState extends State<LoginScreen> {
                               return Bottom_bar();
                             }));
                           } on FirebaseAuthException catch (e) {
-                            if (e.code == 'weak-password') {
-                              showsnackbar(context, 'weak pasworrd');
-                            } else if (e.code == 'email-already-in-use') {
-                              showsnackbar(context, 'email already exists');
+                            if (e.code == 'user-not-found') {
+                              showsnackbar(
+                                  context, 'No user found for that email');
+                            } else if (e.code == 'wrong-password') {
+                              showsnackbar(context,
+                                  'Wrong password provided for that user');
+                            } else {
+                              showsnackbar(context,
+                                  'An error occurred while signing in. Please try again later.');
                             }
                           } catch (e) {
                             showsnackbar(context,
@@ -224,13 +228,17 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void showsnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message),padding: EdgeInsets.all(10),margin: EdgeInsets.all(25),behavior: SnackBarBehavior.floating,));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      padding: EdgeInsets.all(10),
+      margin: EdgeInsets.all(25),
+      behavior: SnackBarBehavior.floating,
+    ));
   }
 
   Future<void> login() async {
     UserCredential user =
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: email!,
       password: password!,
     );

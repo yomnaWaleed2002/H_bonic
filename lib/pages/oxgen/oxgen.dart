@@ -3,48 +3,95 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:get/get.dart';
 import 'package:awesome_ripple_animation/awesome_ripple_animation.dart';
 import 'package:liquid_progress_indicator_v2/liquid_progress_indicator.dart';
 
-
 class oxgen extends StatefulWidget {
-final Stream<Uint8List>? dataStream;
+  final Stream<Uint8List>? dataStream;
   const oxgen({Key? key, this.dataStream}) : super(key: key);
   @override
   State<oxgen> createState() => _oxgenState();
 }
 
 class _oxgenState extends State<oxgen> {
-
-int oxygenLevel = 0;
+  String _receivedData = '';
+  String heartRate = '';
+  String oxygenSaturation = '';
+  String temperature = '';
+  bool _isConnected = false; // Track connection status
+  BluetoothConnection? connection;
 
   @override
   void initState() {
     super.initState();
-    _startTimer();
   }
 
-  void _startTimer() {
-    Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      if (widget.dataStream != null) {
-        widget.dataStream!.listen((Uint8List data) {
+  void _connectBluetooth() async {
+    try {
+      // Fetch all bonded devices
+      List<BluetoothDevice> devices =
+          await FlutterBluetoothSerial.instance.getBondedDevices();
+
+      // Find the device by name
+      BluetoothDevice device = devices.firstWhere(
+        (device) => device.name == 'HC-05',
+      );
+
+      if (device != null) {
+        // Connect to the device
+        connection = await BluetoothConnection.toAddress(device.address);
+        connection!.input!.listen((Uint8List data) {
           setState(() {
-            oxygenLevel = int.parse(ascii.decode(data));
+            _receivedData += String.fromCharCodes(data);
+            // Split received data into three values
+            List<String> values = _receivedData.split(',');
+            if (values.length >= 3) {
+              heartRate = values[0];
+              oxygenSaturation = values[1];
+              temperature = values[2];
+
+              // Do something with the received data
+              print('Heart Rate: $heartRate');
+              print('Oxygen Saturation: $oxygenSaturation');
+              print('Temperature: $temperature');
+              // Clear received data buffer
+              _receivedData = '';
+            }
           });
         });
+
+        setState(() {
+          _isConnected = true; // Update connection status
+        });
+      } else {
+        print('Device not found.');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  void _disconnectBluetooth() {
+    setState(() {
+      _isConnected = false; // Update connection status
+      _receivedData = '';
+      heartRate = '';
+      oxygenSaturation = '';
+      temperature = '';
+      // Close the Bluetooth connection
+      if (connection != null) {
+        connection!.close();
       }
     });
   }
-  
-
 
   @override
   Widget build(BuildContext context) {
-    double oxgen2 = oxygenLevel / 100;
+    //double oxgen2 = double.parse(oxygenSaturation) / 100;
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
-    
       children: [
         Padding(
           padding: const EdgeInsets.all(42),
@@ -93,7 +140,7 @@ int oxygenLevel = 0;
                         size: const Size(180, 180),
                         child: Center(
                           child: LiquidCircularProgressIndicator(
-                            value: oxgen2, // Defaults to 0.5.
+                            value: 0, // Defaults to 0.5.
                             valueColor: const AlwaysStoppedAnimation(
                               Color(0xff469FD1),
                             ), // Defaults to the current Theme's accentColor.
@@ -104,7 +151,7 @@ int oxygenLevel = 0;
                             direction: Axis
                                 .vertical, // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right). Defaults to Axis.vertical.
                             center: Text(
-                              '$oxygenLevel',
+                              oxygenSaturation,
                               style:
                                   TextStyle(color: Colors.white, fontSize: 20),
                             ),
@@ -133,31 +180,20 @@ int oxygenLevel = 0;
           height: 70,
         ),
         ElevatedButton(
-          onPressed: () {
-            
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xff469FD1),
-            fixedSize: const Size(175, 73),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+             style: ButtonStyle(
+    backgroundColor: MaterialStateProperty.all<Color>(
+      _isConnected ?  Color(0xFF459ED1):  Color(0xFF459ED1), // Change color based on condition
+    ),
+    fixedSize: MaterialStateProperty.all<Size>(
+      Size(200, 80), // Change the size of the button
+    ),
+  ),
+              onPressed:
+                  _isConnected ? _disconnectBluetooth : _connectBluetooth,
+              child: Text(_isConnected
+                  ? 'stoping'
+                  : 'Measure',style: TextStyle(color: Colors.white,fontSize: 22))
             ),
-          ),
-          child: SizedBox(
-            width: 103,
-            height: 32,
-            child: Text(
-              "Measure".tr,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontFamily: 'Plus Jakarta Sans',
-                fontWeight: FontWeight.w500,
-                height: 0,
-              ),
-            ),
-          ),
-        ),
       ],
     );
   }

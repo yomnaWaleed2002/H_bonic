@@ -1,86 +1,112 @@
-import 'dart:async';
+import 'dart:typed_data';
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-import 'package:permission_handler/permission_handler.dart';
 
-class BluetoothWidget extends StatefulWidget {
-  const BluetoothWidget({Key? key}) : super(key: key);
-
+class BluetoothReceiver extends StatefulWidget {
   @override
-  _BluetoothWidgetState createState() => _BluetoothWidgetState();
+  _BluetoothReceiverState createState() => _BluetoothReceiverState();
 }
 
-class _BluetoothWidgetState extends State<BluetoothWidget> {
-  List<BluetoothDevice> _devices = [];
-  BluetoothConnection? _connection;
+class _BluetoothReceiverState extends State<BluetoothReceiver> {
+  String _receivedData = '';
+  String heartRate = '';
+  String oxygenSaturation = '';
+  String temperature = '';
+  bool _isConnected = false; // Track connection status
+  BluetoothConnection? connection; // Bluetooth connection variable
 
   @override
   void initState() {
     super.initState();
-    _loadDevices();
   }
 
-  Future<void> _loadDevices() async {
+  void _connectBluetooth() async {
     try {
-      await FlutterBluetoothSerial.instance.requestEnable();
-      FlutterBluetoothSerial.instance.startDiscovery().listen((result) {
-        setState(() {
-          final device = result.device;
-          if (!_devices.contains(device)) {
-            _devices.add(device);
-          }
+      // Fetch all bonded devices
+      List<BluetoothDevice> devices =
+          await FlutterBluetoothSerial.instance.getBondedDevices();
+
+      // Find the device by name
+      BluetoothDevice device = devices.firstWhere(
+        (device) => device.name == 'HC-05',
+      );
+
+      if (device != null) {
+        // Connect to the device
+        connection = await BluetoothConnection.toAddress(device.address);
+        connection!.input!.listen((Uint8List data) {
+          setState(() {
+            _receivedData += String.fromCharCodes(data);
+            // Split received data into three values
+            List<String> values = _receivedData.split(',');
+
+            heartRate = values[0];
+            oxygenSaturation = values[1];
+            temperature = values[2];
+
+            // Do something with the received data
+            print('Heart Rate: $heartRate');
+            print('Oxygen Saturation: $oxygenSaturation');
+            print('Temperature: $temperature');
+            // Clear received data buffer
+            _receivedData = '';
+          });
         });
-      });
+
+        setState(() {
+          _isConnected = true; // Update connection status
+        });
+      } else {
+        print('Device not found.');
+      }
     } catch (e) {
-      print('Error starting discovery: $e');
+      print('Error: $e');
     }
   }
 
-  Future<void> _connectToDevice(BluetoothDevice device) async {
-  try {
-    _connection = await BluetoothConnection.toAddress(device.address);
-    // Connection successful, show success message
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Connected to ${device.name ?? 'Unknown device'}'),
-      ),
-    );
-  } catch (e) {
-    // Connection failed, show error message
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Failed to connect to ${device.name ?? 'Unknown device'}'),
-      ),
-    );
-    print('Error connecting to device: $e');
+  void _disconnectBluetooth() {
+    setState(() {
+      _isConnected = false; // Update connection status
+      _receivedData = '';
+      heartRate = '';
+      oxygenSaturation = '';
+      temperature = '';
+      // Close the Bluetooth connection
+      if (connection != null) {
+        connection!.close();
+      }
+    });
   }
-}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("-- Connect to H-bionc --"),
+        title: Text('Connect to a H-bionc'.tr),
       ),
       body: Center(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 30.0),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _devices.length,
-                itemBuilder: (context, index) {
-                  final device = _devices[index];
-                  return ListTile(
-                    title: Text(device.name ?? 'Unknown device'),
-                    subtitle: Text(device.address),
-                    onTap: () async {
-                      await _connectToDevice(device);
-                    },
-                  );
-                },
-              ),
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image.asset("images/hand.png"),
+            Text(
+              'heart rate: $heartRate'.tr,
+              style: TextStyle(fontSize: 18),
+            ),
+            Text(
+              'oxygen rate: $oxygenSaturation'.tr,
+              style: TextStyle(fontSize: 18),
+            ),
+            Text(
+              'temperature: $temperature'.tr,
+              style: TextStyle(fontSize: 18),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed:
+                  _isConnected ? _disconnectBluetooth : _connectBluetooth,
+              child: Text(_isConnected ? 'Disconnect '.tr : 'Connect '.tr),
             ),
           ],
         ),

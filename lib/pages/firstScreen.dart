@@ -27,8 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: SafeArea(
+      body:  SafeArea(
           child: Center(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -65,7 +64,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ),
         ),
-      ),
+     
     );
   }
 }

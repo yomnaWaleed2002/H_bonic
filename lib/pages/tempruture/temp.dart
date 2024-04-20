@@ -16,29 +16,81 @@ class tmp extends StatefulWidget {
 }
 
 class _tmpState extends State<tmp> {
-  int temperature = 0;
+   String _receivedData = '';
+  String heartRate = '';
+  String oxygenSaturation = '';
+  String temperature = '';
+  bool _isConnected = false; // Track connection status
+  BluetoothConnection? connection;
 
   @override
   void initState() {
     super.initState();
-    _startTimer();
   }
 
-  void _startTimer() {
-    Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      if (widget.connection != null && widget.connection!.isConnected) {
-        widget.connection!.input!.listen((Uint8List data) {
+  
+  void _connectBluetooth() async {
+    try {
+      // Fetch all bonded devices
+      List<BluetoothDevice> devices =
+          await FlutterBluetoothSerial.instance.getBondedDevices();
+
+      // Find the device by name
+      BluetoothDevice device = devices.firstWhere(
+        (device) => device.name == 'HC-05',
+      );
+
+      if (device != null) {
+        // Connect to the device
+        connection = await BluetoothConnection.toAddress(device.address);
+        connection!.input!.listen((Uint8List data) {
           setState(() {
-            temperature = int.parse(ascii.decode(data));
+            _receivedData += String.fromCharCodes(data);
+            // Split received data into three values
+            List<String> values = _receivedData.split(',');
+            if (values.length >= 3) {
+              heartRate = values[0];
+              oxygenSaturation = values[1];
+              temperature = values[2];
+
+              // Do something with the received data
+              print('Heart Rate: $heartRate');
+              print('Oxygen Saturation: $oxygenSaturation');
+              print('Temperature: $temperature');
+              // Clear received data buffer
+              _receivedData = '';
+            }
           });
         });
+
+        setState(() {
+          _isConnected = true; // Update connection status
+        });
+      } else {
+        print('Device not found.');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
+  void _disconnectBluetooth() {
+    setState(() {
+      _isConnected = false; // Update connection status
+      _receivedData = '';
+      heartRate = '';
+      oxygenSaturation = '';
+      temperature = '';
+      // Close the Bluetooth connection
+      if (connection != null) {
+        connection!.close();
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    double temperature2 = temperature / 100;
+    double temperature2 = 0.5 ;
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
@@ -82,11 +134,11 @@ class _tmpState extends State<tmp> {
                     child: Column(
                       children: [
                         Text(
-                          '$temperature',
+                          temperature,
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Color(0xFF469FD1),
-                            fontSize: 88,
+                            fontSize: 60,
                             fontFamily: 'Century Gothic',
                             fontWeight: FontWeight.w400,
                             height: 0,
@@ -112,32 +164,21 @@ class _tmpState extends State<tmp> {
         SizedBox(
           height: 40,
         ),
-        ElevatedButton(
-          onPressed: () {
-            _startTimer();
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Color(0xff469FD1),
-            fixedSize: const Size(175, 70),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+         ElevatedButton(
+             style: ButtonStyle(
+    backgroundColor: MaterialStateProperty.all<Color>(
+      _isConnected ?  Color(0xFF459ED1):  Color(0xFF459ED1), // Change color based on condition
+    ),
+    fixedSize: MaterialStateProperty.all<Size>(
+      Size(200, 80), // Change the size of the button
+    ),
+  ),
+              onPressed:
+                  _isConnected ? _disconnectBluetooth : _connectBluetooth,
+              child: Text(_isConnected
+                  ? 'stoping'
+                  : 'Measure',style: TextStyle(color: Colors.white,fontSize: 22))
             ),
-          ),
-          child: SizedBox(
-            width: 103,
-            height: 32,
-            child: Text(
-              "Measure".tr,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontFamily: 'Plus Jakarta Sans',
-                fontWeight: FontWeight.w500,
-                height: 0.8,
-              ),
-            ),
-          ),
-        ),
       ],
     );
   }
