@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +15,7 @@ class tmp extends StatefulWidget {
 }
 
 class _tmpState extends State<tmp> {
-   String _receivedData = '';
+  String _receivedData = '';
   String heartRate = '';
   String oxygenSaturation = '';
   String temperature = '';
@@ -28,7 +27,6 @@ class _tmpState extends State<tmp> {
     super.initState();
   }
 
-  
   void _connectBluetooth() async {
     try {
       // Fetch all bonded devices
@@ -46,20 +44,22 @@ class _tmpState extends State<tmp> {
         connection!.input!.listen((Uint8List data) {
           setState(() {
             _receivedData += String.fromCharCodes(data);
-            // Split received data into three values
-            List<String> values = _receivedData.split(',');
-            if (values.length >= 3) {
-              heartRate = values[0];
-              oxygenSaturation = values[1];
-              temperature = values[2];
 
-              // Do something with the received data
-              print('Heart Rate: $heartRate');
-              print('Oxygen Saturation: $oxygenSaturation');
-              print('Temperature: $temperature');
-              // Clear received data buffer
-              _receivedData = '';
-            }
+            // Split received data into three values after a delay
+            Timer(Duration(milliseconds: 100), () {
+              List<String> values = _receivedData.split(',');
+              if (values.length >= 3) {
+                heartRate = values[0];
+                oxygenSaturation = values[1];
+                temperature = values[2];
+
+                print('Heart Rate: $heartRate');
+                print('Oxygen Saturation: $oxygenSaturation');
+                print('Temperature: $temperature');
+                // Clear received data buffer
+                _receivedData = '';
+              }
+            });
           });
         });
 
@@ -90,7 +90,19 @@ class _tmpState extends State<tmp> {
 
   @override
   Widget build(BuildContext context) {
-    double temperature2 = 0.5 ;
+    double temperature2 = 0.0; // Default value in case of parsing failure
+
+    try {
+      // Attempt to parse the temperature string to a double
+      double parsedTemperature = double.tryParse(temperature) ?? 0.0;
+
+      // Divide the parsed temperature by 100
+      temperature2 = parsedTemperature / 100;
+    } catch (e) {
+      // Handle parsing exceptions, such as invalid input
+      print("Error parsing temperature string to double: $e");
+    }
+
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
@@ -138,7 +150,7 @@ class _tmpState extends State<tmp> {
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Color(0xFF469FD1),
-                            fontSize: 60,
+                            fontSize: 28,
                             fontFamily: 'Century Gothic',
                             fontWeight: FontWeight.w400,
                             height: 0,
@@ -164,21 +176,20 @@ class _tmpState extends State<tmp> {
         SizedBox(
           height: 40,
         ),
-         ElevatedButton(
-             style: ButtonStyle(
-    backgroundColor: MaterialStateProperty.all<Color>(
-      _isConnected ?  Color(0xFF459ED1):  Color(0xFF459ED1), // Change color based on condition
-    ),
-    fixedSize: MaterialStateProperty.all<Size>(
-      Size(200, 80), // Change the size of the button
-    ),
-  ),
-              onPressed:
-                  _isConnected ? _disconnectBluetooth : _connectBluetooth,
-              child: Text(_isConnected
-                  ? 'stoping'
-                  : 'Measure',style: TextStyle(color: Colors.white,fontSize: 22))
+        ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+                _isConnected
+                    ? Color(0xFF459ED1)
+                    : Color(0xFF459ED1), // Change color based on condition
+              ),
+              fixedSize: MaterialStateProperty.all<Size>(
+                Size(200, 80), // Change the size of the button
+              ),
             ),
+            onPressed: _isConnected ? _disconnectBluetooth : _connectBluetooth,
+            child: Text(_isConnected ? 'stoping' : 'Measure',
+                style: TextStyle(color: Colors.white, fontSize: 22))),
       ],
     );
   }

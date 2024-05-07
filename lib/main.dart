@@ -59,7 +59,7 @@ class _MyAppState extends State<MyApp> {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: _themeManager.themeMode,
-      home: SplashScreen(),
+      home: Bottom_bar(),
       translations: Translation(),
       locale: const Locale('en', 'US'),
       fallbackLocale: const Locale('en'),
@@ -164,7 +164,7 @@ class _MyHomeScreenState extends State<Setting> {
                 ],
               ),
             ),
-            Padding(
+            /* Padding(
               padding: const EdgeInsets.only(top: 30, left: 17, right: 17),
               child: Text(
                 "bluetooth".tr,
@@ -202,7 +202,7 @@ class _MyHomeScreenState extends State<Setting> {
                   ),
                 ],
               ),
-            ),
+            ),*/
             Padding(
               padding: const EdgeInsets.only(top: 30, left: 17, right: 17),
               child: Text(

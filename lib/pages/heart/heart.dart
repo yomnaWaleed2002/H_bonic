@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -44,20 +42,23 @@ class _MyWidgetState extends State<heart> {
         connection!.input!.listen((Uint8List data) {
           setState(() {
             _receivedData += String.fromCharCodes(data);
-            // Split received data into three values
-            List<String> values = _receivedData.split(',');
-            if (values.length >= 3) {
-              heartRate = values[0];
-              oxygenSaturation = values[1];
-              temperature = values[2];
 
-              // Do something with the received data
-              print('Heart Rate: $heartRate');
-              print('Oxygen Saturation: $oxygenSaturation');
-              print('Temperature: $temperature');
-              // Clear received data buffer
-              _receivedData = '';
-            }
+            // Split received data into three values after a delay
+            Timer(Duration(milliseconds: 100), () {
+              List<String> values = _receivedData.split(',');
+              if (values.length >= 3) {
+                
+                heartRate = values[0];
+                oxygenSaturation = values[1];
+                temperature = values[2];
+
+                print('Heart Rate: $heartRate');
+                print('Oxygen Saturation: $oxygenSaturation');
+                print('Temperature: $temperature');
+                // Clear received data buffer
+                _receivedData = '';
+              }
+            });
           });
         });
 
@@ -142,7 +143,7 @@ class _MyWidgetState extends State<heart> {
                     heartRate,
                     style: const TextStyle(
                       color: Color(0xFF459ED1),
-                      fontSize: 17,
+                      fontSize: 19,
                       fontFamily: 'Century Gothic',
                       fontWeight: FontWeight.w400,
                     ),

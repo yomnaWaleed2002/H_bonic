@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -45,20 +44,22 @@ class _oxgenState extends State<oxgen> {
         connection!.input!.listen((Uint8List data) {
           setState(() {
             _receivedData += String.fromCharCodes(data);
-            // Split received data into three values
-            List<String> values = _receivedData.split(',');
-            if (values.length >= 3) {
-              heartRate = values[0];
-              oxygenSaturation = values[1];
-              temperature = values[2];
 
-              // Do something with the received data
-              print('Heart Rate: $heartRate');
-              print('Oxygen Saturation: $oxygenSaturation');
-              print('Temperature: $temperature');
-              // Clear received data buffer
-              _receivedData = '';
-            }
+            // Split received data into three values after a delay
+            Timer(Duration(milliseconds: 100), () {
+              List<String> values = _receivedData.split(',');
+              if (values.length >= 3) {
+                heartRate = values[0];
+                oxygenSaturation = values[1];
+                temperature = values[2];
+
+                print('Heart Rate: $heartRate');
+                print('Oxygen Saturation: $oxygenSaturation');
+                print('Temperature: $temperature');
+                // Clear received data buffer
+                _receivedData = '';
+              }
+            });
           });
         });
 
@@ -89,7 +90,17 @@ class _oxgenState extends State<oxgen> {
 
   @override
   Widget build(BuildContext context) {
-    //double oxgen2 = double.parse(oxygenSaturation) / 100;
+    double oxgen2 = 0.0;
+    try {
+      // Attempt to parse the temperature string to a double
+      double parsedTemperature = double.tryParse(temperature) ?? 0.0;
+
+      // Divide the parsed temperature by 100
+      oxgen2 = parsedTemperature / 100;
+    } catch (e) {
+      // Handle parsing exceptions, such as invalid input
+      print("Error parsing temperature string to double: $e");
+    }
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
@@ -140,7 +151,7 @@ class _oxgenState extends State<oxgen> {
                         size: const Size(180, 180),
                         child: Center(
                           child: LiquidCircularProgressIndicator(
-                            value: 0, // Defaults to 0.5.
+                            value: oxgen2, // Defaults to 0.5.
                             valueColor: const AlwaysStoppedAnimation(
                               Color(0xff469FD1),
                             ), // Defaults to the current Theme's accentColor.
@@ -180,20 +191,19 @@ class _oxgenState extends State<oxgen> {
           height: 70,
         ),
         ElevatedButton(
-             style: ButtonStyle(
-    backgroundColor: MaterialStateProperty.all<Color>(
-      _isConnected ?  Color(0xFF459ED1):  Color(0xFF459ED1), // Change color based on condition
-    ),
-    fixedSize: MaterialStateProperty.all<Size>(
-      Size(200, 80), // Change the size of the button
-    ),
-  ),
-              onPressed:
-                  _isConnected ? _disconnectBluetooth : _connectBluetooth,
-              child: Text(_isConnected
-                  ? 'stoping'
-                  : 'Measure',style: TextStyle(color: Colors.white,fontSize: 22))
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+                _isConnected
+                    ? Color(0xFF459ED1)
+                    : Color(0xFF459ED1), // Change color based on condition
+              ),
+              fixedSize: MaterialStateProperty.all<Size>(
+                Size(200, 80), // Change the size of the button
+              ),
             ),
+            onPressed: _isConnected ? _disconnectBluetooth : _connectBluetooth,
+            child: Text(_isConnected ? 'stoping' : 'Measure',
+                style: TextStyle(color: Colors.white, fontSize: 22))),
       ],
     );
   }

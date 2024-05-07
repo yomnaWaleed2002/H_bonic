@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -11,10 +12,11 @@ class BluetoothReceiver extends StatefulWidget {
 class _BluetoothReceiverState extends State<BluetoothReceiver> {
   String _receivedData = '';
   String heartRate = '';
+  String deleting = '';
   String oxygenSaturation = '';
   String temperature = '';
   bool _isConnected = false; // Track connection status
-  BluetoothConnection? connection; // Bluetooth connection variable
+  BluetoothConnection? connection;
 
   @override
   void initState() {
@@ -38,19 +40,23 @@ class _BluetoothReceiverState extends State<BluetoothReceiver> {
         connection!.input!.listen((Uint8List data) {
           setState(() {
             _receivedData += String.fromCharCodes(data);
-            // Split received data into three values
-            List<String> values = _receivedData.split(',');
 
-            heartRate = values[0];
-            oxygenSaturation = values[1];
-            temperature = values[2];
+            // Split received data into three values after a delay
+            Timer(Duration(milliseconds: 100), () {
+              List<String> values = _receivedData.split(',');
+              if (values.length >= 3) {
+                
+                heartRate = values[0];
+                oxygenSaturation = values[1];
+                temperature = values[2];
 
-            // Do something with the received data
-            print('Heart Rate: $heartRate');
-            print('Oxygen Saturation: $oxygenSaturation');
-            print('Temperature: $temperature');
-            // Clear received data buffer
-            _receivedData = '';
+                print('Heart Rate: $heartRate');
+                print('Oxygen Saturation: $oxygenSaturation');
+                print('Temperature: $temperature');
+                // Clear received data buffer
+                _receivedData = '';
+              }
+            });
           });
         });
 
