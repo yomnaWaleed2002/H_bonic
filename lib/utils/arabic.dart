@@ -43,4 +43,5 @@ const Map<String, String> ur_PK = {
   'stoping': 'ايقاف',
   'chat now': 'تواصل الان',
   'H-Bionic Chat': 'التواصل مع الدعم',
+
 };

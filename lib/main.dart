@@ -59,7 +59,7 @@ class _MyAppState extends State<MyApp> {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: _themeManager.themeMode,
-      home: Bottom_bar(),
+      home: SplashScreen(),
       translations: Translation(),
       locale: const Locale('en', 'US'),
       fallbackLocale: const Locale('en'),
@@ -84,11 +84,13 @@ class _MyHomeScreenState extends State<Setting> {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body: SingleChildScrollView(
+        
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            
             Padding(
-              padding: const EdgeInsets.only(top: 20),
+              padding: const EdgeInsets.only(top: 40),
               child: ListTile(
                 leading: const Icon(
                   Icons.settings,

@@ -14,7 +14,6 @@ class _chatState extends State<chat> {
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Color(0xFFFFFFFF),
       body: Column(
         children: [
           Center(
@@ -26,8 +25,8 @@ class _chatState extends State<chat> {
                   child: Row(
                     children: [
                       const CircleAvatar(
-                        backgroundImage:
-                            AssetImage('images/customer-service 1.png'),
+                        backgroundImage: AssetImage(
+                            'images/customer-service_1-removebg-preview.png'),
                         radius: 30,
                         backgroundColor: Colors.white,
                       ),
@@ -46,7 +45,7 @@ class _chatState extends State<chat> {
                     ],
                   ),
                 ),
-                Image.asset("images/chatnoow.png"),
+                Image.asset("images/chatnoow-removebg-preview.png"),
                 SizedBox(
                   height: 20,
                 ),

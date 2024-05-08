@@ -26,6 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
   @override
   Widget build(BuildContext context) {
+     bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       body:  SafeArea(
           child: Center(
@@ -34,9 +35,9 @@ class _SplashScreenState extends State<SplashScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 const Spacer(),
-                const Text(
+                 Text(
                   'H-BIONIC',
-                  style: TextStyle(fontSize: 55, fontWeight: FontWeight.normal),
+                  style: TextStyle(fontSize: 55, fontWeight: FontWeight.normal,color: isDark ? Colors.white : Colors.black,),
                 ),
                 const Spacer(),
                 CircleAvatar(

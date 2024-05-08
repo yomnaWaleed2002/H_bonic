@@ -24,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isChecked = false;
   @override
   Widget build(BuildContext context) {
+  bool isDark = Theme.of(context).brightness == Brightness.dark;
     return ModalProgressHUD(
       inAsyncCall: loding,
       child: Scaffold(
@@ -43,8 +44,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   Text(
                     'Login'.tr,
-                    style: const TextStyle(
-                        fontSize: 50, fontWeight: FontWeight.normal),
+                    style:  TextStyle(
+                        fontSize: 50, fontWeight: FontWeight.normal,color: isDark ? Colors.white : Colors.black,),
                   ),
                   Text(
                     "Please Login to continue".tr,
